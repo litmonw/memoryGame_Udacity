@@ -51,6 +51,10 @@ h1 {
     margin: 0 0 3em;
 }
 
+.hide {
+    display: none;
+}
+
 .deck .card {
     height: 125px;
     width: 125px;
@@ -106,4 +110,26 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
+}
+
+.success-board {
+    width: 400px;
+}
+
+.success-board div {
+    margin: 0 auto;
+}
+
+.success-board p {
+    text-align: center;
+}
+
+.success-board ul {
+    padding-left: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+.stars li {
+    display: inline-block;
 }
