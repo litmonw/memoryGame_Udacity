@@ -1,29 +1,36 @@
-/*
- * 创建一个包含所有卡片的数组
- */
+// 初始数据
 var arr = ['diamond', 'paper-plane-o', 'anchor', 'bolt', 'cube', 'anchor', 'leaf', 'bicycle', 'diamond', 'bomb', 'leaf', 'bomb', 'bolt', 'bicycle', 'paper-plane-o', 'cube'];
 
-// 初始数据
 var movesObj = document.getElementsByClassName('moves')[0];
+// 步数
 var moves = 0;
+
+// 匹配次数
 var matched = 0;
+
+// 星级数
+var stars = 3;
+
+// 游戏状态
 var start = false;
+
+// 避免点击过快
+var ban = false;
+
 var timeNum = document.getElementsByClassName('time')[0];
-/*
- * 显示页面上的卡片
- *   - 使用下面提供的 "shuffle" 方法对数组中的卡片进行洗牌
- *   - 循环遍历每张卡片，创建其 HTML
- *   - 将每张卡的 HTML 添加到页面
- */
 var deck = document.getElementsByClassName('deck')[0];
 
+// 临时匹配容器
 var open = [];
+
+// 所有的卡牌
 var items = deck.childNodes;
 
-console.log(items);
-
+/**
+ * @description  初始化数据
+ */
 function init() {
-	// 随机数据
+	// 卡片洗牌
 	var randomArr = shuffle(arr);
 	
 	// 如果并非首次初始化
@@ -35,7 +42,7 @@ function init() {
 		}
 	}
 
-	// 初始随机数据
+	// 循环遍历每张卡片，创建其 HTML，将每张卡的 HTML 添加到页面
 	for (var i = 0; i < randomArr.length; i++) {
 		var card = document.createElement('li');
 		card.className = 'card';
@@ -47,13 +54,11 @@ function init() {
 
 	// 添加事件
 	monitor();
-
 }
-
-// 奇怪
-init();
-
-// 洗牌函数来自于 http://stackoverflow.com/a/2450976
+/**
+ * 洗牌函数来自于 http://stackoverflow.com/a/2450976
+ * @returns {array} 随机排序之后的数组
+ */
 function shuffle(array) {
 	var currentIndex = array.length,
 		temporaryValue, randomIndex;
@@ -69,25 +74,22 @@ function shuffle(array) {
 	return array;
 }
 
-
-/*
- * 设置一张卡片的事件监听器。 如果该卡片被点击：
- *  - 显示卡片的符号（将这个功能放在你从这个函数中调用的另一个函数中）
- *  - 将卡片添加到状态为 “open” 的 *数组* 中（将这个功能放在你从这个函数中调用的另一个函数中）
- *  - 如果数组中已有另一张卡，请检查两张卡片是否匹配
- *    + 如果卡片匹配，将卡片锁定为 "open" 状态（将这个功能放在你从这个函数中调用的另一个函数中）
- *    + 如果卡片不匹配，请将卡片从数组中移除并隐藏卡片的符号（将这个功能放在你从这个函数中调用的另一个函数中）
- *    + 增加移动计数器并将其显示在页面上（将这个功能放在你从这个函数中调用的另一个函数中）
- *    + 如果所有卡都匹配，则显示带有最终分数的消息（将这个功能放在你从这个函数中调用的另一个函数中）
+/**
+ * @description 绑定卡牌点击事件
  */
-
 function monitor() {
 	for (var i = 0; i < items.length; i++) {
 		items[i].addEventListener('click', function() {
-			// 计时器
+			
+			// 首次点击时开始计时
 			if (!start) {
 				start = true;
 				calculateTime();
+			}
+
+			// 放置点击过快
+			if (ban) {
+				return false;
 			}
 
 			// 增加移动次数
@@ -111,6 +113,7 @@ function monitor() {
 
 			// 检测两张卡是否匹配
 			if (open.length == 2) {
+				ban = true;
 				if (open[0] == open[1]) {
 					matchSuccess();
 				} else {
@@ -126,19 +129,33 @@ function monitor() {
 	}
 }
 
+/**
+ * @description 移动次数更改
+ */
 function addMoves() {
 	moves++;
 	movesObj.innerText = moves;
 }
 
+/**
+ * @description 显示卡牌
+ * @param event - Event 对象
+ */
 function showCard(event) {
 	event.target.classList.add('open', 'show');
 }
 
+/**
+ * @description 添加卡牌
+ * @param event - Event 对象
+ */
 function pushOpen(event) {
 	open.push(event.target.childNodes[0].classList[1].slice(3));
 }
 
+/**
+ * 匹配卡牌成功
+ */
 function matchSuccess() {
 	setTimeout(function() {
 		for (var i = 1; i < items.length; i++) {
@@ -149,14 +166,16 @@ function matchSuccess() {
 		}
 
 		open = [];
+		ban = false;
 	}, 1000);
 
 	matched++;
 }
 
+/**
+ * 匹配卡牌失败
+ */
 function matchFail() {
-	// console.log(items[1].childNodes[0].classList[1]);
-	// 整个 items 节点包含一个 text 节点
 	setTimeout(function() {
 		for (var i = 1; i < items.length; i++) {
 			if (items[i].childNodes[0].classList[1].slice(3) == open[0] || items[i].childNodes[0].classList[1].slice(3) == open[1]) {
@@ -164,26 +183,48 @@ function matchFail() {
 			}
 		}
 
+		// 清空临时匹配容器
 		open = [];
+		// 允许继续点击
+		ban = false;
 	}, 1000);
 }
 
+/**
+ * 游戏胜利
+ */
 function gameSuccess() {
 	alert('游戏胜利，你的步数为' + moves + '，时间为：' + timeNum.innerText);
 	start = false;
 }
 
+
+/**
+ * 游戏计时
+ */
 function calculateTime() {
 	var timer = setInterval(function() {
 		timeNum.innerText = parseInt(timeNum.innerText) + 1;
+		
+		// 星级评定
+		calculateStars();
+
+		// 结束计时
 		if (!start) {
 			clearInterval(timer);
 		}
+
 	}, 1000);
 }
 
+// 游戏首次加载
+init();
+
 var repeat = document.getElementsByClassName('fa-repeat')[0];
+
+// 为重置绑定点击事件
 repeat.addEventListener('click', function() {
+	// 初始化所有游戏数据
 	open = [];
 	start = false;
 	timeNum.innerText = 0;
@@ -191,9 +232,27 @@ repeat.addEventListener('click', function() {
 	moves = 0;
 	matched = 0;
 
+	// 移除旧游戏卡牌
 	for (var i = 1; i < items.length; i++) {
 		items[i].classList.remove('open', 'show', 'match');
 	}
 
+	// 重新初始化
 	init();
 });
+
+/**
+ * @description 星级评定
+ */
+function calculateStars() {
+	var starsObj = document.getElementsByClassName('stars')[0];
+	if (moves >= 30 && moves < 60) {
+		stars = 2;
+	} else if (moves >=60) {
+		stars = 1;
+	}
+	starsObj.innerHTML = '';
+	for (var i = 0; i < stars; i++) {
+		starsObj.innerHTML += '<li><i class="fa fa-star"></i></li> ';
+	}
+}
