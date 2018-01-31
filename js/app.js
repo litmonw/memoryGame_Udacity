@@ -32,7 +32,7 @@ var items = deck.childNodes;
 function init() {
 	// 卡片洗牌
 	var randomArr = shuffle(arr);
-	
+
 	// 如果并非首次初始化
 	if (items.length >= 2) {
 		var i = items.length - 1;
@@ -80,7 +80,7 @@ function shuffle(array) {
 function monitor() {
 	for (var i = 0; i < items.length; i++) {
 		items[i].addEventListener('click', function() {
-			
+
 			// 首次点击时开始计时
 			if (!start) {
 				start = true;
@@ -194,8 +194,18 @@ function matchFail() {
  * 游戏胜利
  */
 function gameSuccess() {
-	alert('游戏胜利，你的步数为' + moves + '，时间为：' + timeNum.innerText);
 	start = false;
+
+	// 显示游戏面板
+	deck.classList.add('hide');
+	scorePanel.classList.add('hide');
+	successBoard.classList.remove('hide');
+
+	// 显示游戏最终得分
+	var movesResult = document.getElementsByClassName('moves')[1];
+	movesResult.innerText = moves;
+	var timeResult = document.getElementsByClassName('time')[1];
+	timeResult.innerText = timeNum.innerText;
 }
 
 
@@ -204,15 +214,15 @@ function gameSuccess() {
  */
 function calculateTime() {
 	var timer = setInterval(function() {
-		timeNum.innerText = parseInt(timeNum.innerText) + 1;
-		
-		// 星级评定
-		calculateStars();
-
 		// 结束计时
 		if (!start) {
 			clearInterval(timer);
 		}
+
+		timeNum.innerText = parseInt(timeNum.innerText) + 1;
+
+		// 星级评定
+		calculateStars();
 
 	}, 1000);
 }
@@ -221,9 +231,25 @@ function calculateTime() {
 init();
 
 var repeat = document.getElementsByClassName('fa-repeat')[0];
+var scorePanel = document.getElementsByClassName('score-panel')[0];
+var successBoard = document.getElementsByClassName('success-board')[0];
 
 // 为重置绑定点击事件
 repeat.addEventListener('click', function() {
+	repeatGame();
+});
+
+var again = document.getElementsByClassName('again')[0];
+
+// 为重玩绑定点击事件
+again.addEventListener('click', function() {
+	repeatGame();
+	deck.classList.remove('hide');
+	scorePanel.classList.remove('hide');
+	successBoard.classList.add('hide');
+});
+
+function repeatGame() {
 	// 初始化所有游戏数据
 	open = [];
 	start = false;
@@ -232,6 +258,10 @@ repeat.addEventListener('click', function() {
 	moves = 0;
 	matched = 0;
 
+	//重置星级评分
+	stars = 3;
+	calculateStars();
+
 	// 移除旧游戏卡牌
 	for (var i = 1; i < items.length; i++) {
 		items[i].classList.remove('open', 'show', 'match');
@@ -239,20 +269,25 @@ repeat.addEventListener('click', function() {
 
 	// 重新初始化
 	init();
-});
+}
 
 /**
  * @description 星级评定
  */
 function calculateStars() {
-	var starsObj = document.getElementsByClassName('stars')[0];
+	var starsObj = document.getElementsByClassName('stars');
 	if (moves >= 30 && moves < 60) {
 		stars = 2;
-	} else if (moves >=60) {
+	} else if (moves >= 60) {
 		stars = 1;
 	}
-	starsObj.innerHTML = '';
+	starsObj[0].innerHTML = '';
+	starsObj[1].innerHTML = '';
 	for (var i = 0; i < stars; i++) {
-		starsObj.innerHTML += '<li><i class="fa fa-star"></i></li> ';
+		for (var j = 0; j < starsObj.length; j++) {
+			starsObj[j].innerHTML += '<li><i class="fa fa-star"></i></li> ';
+		}
 	}
+
+
 }
