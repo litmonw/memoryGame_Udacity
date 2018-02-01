@@ -1,41 +1,41 @@
 // 初始数据
-var arr = ['diamond', 'paper-plane-o', 'anchor', 'bolt', 'cube', 'anchor', 'leaf', 'bicycle', 'diamond', 'bomb', 'leaf', 'bomb', 'bolt', 'bicycle', 'paper-plane-o', 'cube'];
+const arr = ['diamond', 'paper-plane-o', 'anchor', 'bolt', 'cube', 'anchor', 'leaf', 'bicycle', 'diamond', 'bomb', 'leaf', 'bomb', 'bolt', 'bicycle', 'paper-plane-o', 'cube'];
 
-var movesObj = document.getElementsByClassName('moves')[0];
+const movesObj = document.getElementsByClassName('moves')[0];
 // 步数
-var moves = 0;
+let moves = 0;
 
 // 匹配次数
-var matched = 0;
+let matched = 0;
 
 // 星级数
-var stars = 3;
+let stars = 3;
 
 // 游戏状态
-var start = false;
+let start = false;
 
 // 避免点击过快
-var ban = false;
+let ban = false;
 
-var timeNum = document.getElementsByClassName('time')[0];
-var deck = document.getElementsByClassName('deck')[0];
+let timeNum = document.getElementsByClassName('time')[0];
+let deck = document.getElementsByClassName('deck')[0];
 
 // 临时匹配容器
-var open = [];
+let open = [];
 
 // 所有的卡牌
-var items = deck.childNodes;
+const items = deck.childNodes;
 
 /**
  * @description  初始化数据
  */
 function init() {
 	// 卡片洗牌
-	var randomArr = shuffle(arr);
+	let randomArr = shuffle(arr);
 
 	// 如果并非首次初始化
 	if (items.length >= 2) {
-		var i = items.length - 1;
+		let i = items.length - 1;
 		while (i > 0) {
 			deck.removeChild(items[i]);
 			i--;
@@ -43,10 +43,10 @@ function init() {
 	}
 
 	// 循环遍历每张卡片，创建其 HTML，将每张卡的 HTML 添加到页面
-	for (var i = 0; i < randomArr.length; i++) {
-		var card = document.createElement('li');
+	for (let i = 0; i < randomArr.length; i++) {
+		let card = document.createElement('li');
 		card.className = 'card';
-		var ie = document.createElement('i');
+		let ie = document.createElement('i');
 		ie.className = 'fa fa-' + randomArr[i];
 		card.appendChild(ie);
 		deck.appendChild(card);
@@ -60,7 +60,7 @@ function init() {
  * @returns {array} 随机排序之后的数组
  */
 function shuffle(array) {
-	var currentIndex = array.length,
+	let currentIndex = array.length,
 		temporaryValue, randomIndex;
 
 	while (currentIndex !== 0) {
@@ -78,7 +78,7 @@ function shuffle(array) {
  * @description 绑定卡牌点击事件
  */
 function monitor() {
-	for (var i = 0; i < items.length; i++) {
+	for (let i = 0; i < items.length; i++) {
 		items[i].addEventListener('click', function() {
 
 			// 首次点击时开始计时
@@ -93,7 +93,6 @@ function monitor() {
 			}
 
 			// 已匹配过的牌
-			console.log(this.classList[1]);
 			if (this.classList[1] == 'match') {
 				return false;
 			}
@@ -106,10 +105,10 @@ function monitor() {
 			// 增加移动次数
 			addMoves();
 
-			// 显示卡片的符号 函数
+			// 显示卡片的符号
 			showCard(this);
 
-			// 将卡片添加到状态为 'open' 的数组中 函数
+			// 将卡片添加到状态为 'open' 的数组中
 			pushOpen(this);
 
 			// 检测两张卡是否匹配
@@ -159,7 +158,7 @@ function pushOpen(event) {
  */
 function matchSuccess() {
 	setTimeout(function() {
-		for (var i = 1; i < items.length; i++) {
+		for (let i = 1; i < items.length; i++) {
 			if (items[i].childNodes[0].classList[1].slice(3) == open[0] || items[i].childNodes[0].classList[1].slice(3) == open[1]) {
 				items[i].classList.remove('open', 'show');
 				items[i].classList.add('match');
@@ -178,7 +177,7 @@ function matchSuccess() {
  */
 function matchFail() {
 	setTimeout(function() {
-		for (var i = 1; i < items.length; i++) {
+		for (let i = 1; i < items.length; i++) {
 			if (items[i].childNodes[0].classList[1].slice(3) == open[0] || items[i].childNodes[0].classList[1].slice(3) == open[1]) {
 				items[i].classList.remove('open', 'show');
 			}
@@ -203,9 +202,9 @@ function gameSuccess() {
 	successBoard.classList.remove('hide');
 
 	// 显示游戏最终得分
-	var movesResult = document.getElementsByClassName('moves')[1];
+	let movesResult = document.getElementsByClassName('moves')[1];
 	movesResult.innerText = moves;
-	var timeResult = document.getElementsByClassName('time')[1];
+	let timeResult = document.getElementsByClassName('time')[1];
 	timeResult.innerText = timeNum.innerText;
 }
 
@@ -214,10 +213,11 @@ function gameSuccess() {
  * 游戏计时
  */
 function calculateTime() {
-	var timer = setInterval(function() {
+	let timer = setInterval(function() {
 		// 结束计时
 		if (!start) {
 			clearInterval(timer);
+			return false;
 		}
 
 		timeNum.innerText = parseInt(timeNum.innerText) + 1;
@@ -231,16 +231,16 @@ function calculateTime() {
 // 游戏首次加载
 init();
 
-var repeat = document.getElementsByClassName('fa-repeat')[0];
-var scorePanel = document.getElementsByClassName('score-panel')[0];
-var successBoard = document.getElementsByClassName('success-board')[0];
+let repeat = document.getElementsByClassName('fa-repeat')[0];
+let scorePanel = document.getElementsByClassName('score-panel')[0];
+let successBoard = document.getElementsByClassName('success-board')[0];
 
 // 为重置绑定点击事件
 repeat.addEventListener('click', function() {
 	repeatGame();
 });
 
-var again = document.getElementsByClassName('again')[0];
+let again = document.getElementsByClassName('again')[0];
 
 // 为重玩绑定点击事件
 again.addEventListener('click', function() {
@@ -264,7 +264,7 @@ function repeatGame() {
 	calculateStars();
 
 	// 移除旧游戏卡牌
-	for (var i = 1; i < items.length; i++) {
+	for (let i = 1; i < items.length; i++) {
 		items[i].classList.remove('open', 'show', 'match');
 	}
 
@@ -276,7 +276,7 @@ function repeatGame() {
  * @description 星级评定
  */
 function calculateStars() {
-	var starsObj = document.getElementsByClassName('stars');
+	let starsObj = document.getElementsByClassName('stars');
 	if (moves >= 30 && moves < 60) {
 		stars = 2;
 	} else if (moves >= 60) {
@@ -284,8 +284,8 @@ function calculateStars() {
 	}
 	starsObj[0].innerHTML = '';
 	starsObj[1].innerHTML = '';
-	for (var i = 0; i < stars; i++) {
-		for (var j = 0; j < starsObj.length; j++) {
+	for (let i = 0; i < stars; i++) {
+		for (let j = 0; j < starsObj.length; j++) {
 			starsObj[j].innerHTML += '<li><i class="fa fa-star"></i></li> ';
 		}
 	}
