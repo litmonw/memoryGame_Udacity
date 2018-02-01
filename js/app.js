@@ -92,24 +92,25 @@ function monitor() {
 				return false;
 			}
 
-			// 增加移动次数
-			addMoves();
-
 			// 已匹配过的牌
-			if (event.target.classList[1] == 'match') {
+			console.log(this.classList[1]);
+			if (this.classList[1] == 'match') {
 				return false;
 			}
 
 			// 重复点击同一张卡牌
-			if (event.target.classList[1] == 'open') {
+			if (this.classList[1] == 'open') {
 				return false;
 			}
 
+			// 增加移动次数
+			addMoves();
+
 			// 显示卡片的符号 函数
-			showCard(event);
+			showCard(this);
 
 			// 将卡片添加到状态为 'open' 的数组中 函数
-			pushOpen(event);
+			pushOpen(this);
 
 			// 检测两张卡是否匹配
 			if (open.length == 2) {
@@ -125,7 +126,7 @@ function monitor() {
 				gameSuccess();
 			}
 
-		})
+		}, true);
 	}
 }
 
@@ -142,7 +143,7 @@ function addMoves() {
  * @param event - Event 对象
  */
 function showCard(event) {
-	event.target.classList.add('open', 'show');
+	event.classList.add('open', 'show');
 }
 
 /**
@@ -150,7 +151,7 @@ function showCard(event) {
  * @param event - Event 对象
  */
 function pushOpen(event) {
-	open.push(event.target.childNodes[0].classList[1].slice(3));
+	open.push(event.childNodes[0].classList[1].slice(3));
 }
 
 /**
